@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor de Cambios</title>
+    <script>
+        function agregarUrl() {
+            let url = document.getElementById("nueva-url").value;
+            fetch("/agregar_url", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ url: url })
+            }).then(response => response.json())
+              .then(data => location.reload());
+        }
+
+        function marcarVisto(url) {
+            fetch("/marcar_visto", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ url: url })
+            }).then(response => response.json())
+              .then(data => location.reload());
+        }
+    </script>
+</head>
+<body>
+    <h1>Monitor de Cambios en Noticias</h1>
+    <input type="text" id="nueva-url" placeholder="Ingrese una URL">
+    <button onclick="agregarUrl()">Agregar</button>
+
+    <h2>Lista de URLs Monitoreadas</h2>
+    <ul>
+        {% for url, data in urls.items() %}
+            <li style="font-weight: {% if data.cambio %}bold{% else %}normal{% endif %}">
+                <a href="{{ url }}" target="_blank">{{ url }}</a>
+                <button onclick="marcarVisto('{{ url }}')">Marcar como visto</button>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
